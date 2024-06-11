@@ -1433,11 +1433,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _queryRadius: 1000
-  _privateARLocations: []
+  _privateARLocations:
+  - {fileID: 11400000, guid: 0d31878c4062bcc409c41acb7929a8d0, type: 2}
   _useCurrentLocation: 0
   _queryLatitude: 0
   _queryLongitude: 0
-  _privateARLocalizationTargets: []
+  _privateARLocalizationTargets:
+  - _identifier: 
+    _name: 1c40d316669449c297b5818e4f60b61f.107
+    _center:
+      lat_degrees: 27.85002326965332
+      lng_degrees: -15.440763473510742
+    _imageURL: 
+    _defaultAnchor: ChYIyp3a9KuImqfQARComaTks83s0/UBGLLo0OyotYYDKicKFQjoq4CRl+XnoY8BEKyrtcLjvenIUhIJCgASBSUAAIA/HQAAgD8yGQoFJQAAgD8RAAAAAKDZO0AZAAAAIK/hLsA=
 --- !u!4 &2001439156
 Transform:
   m_ObjectHideFlags: 0

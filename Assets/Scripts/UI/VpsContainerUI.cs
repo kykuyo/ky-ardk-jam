@@ -30,7 +30,7 @@ public class VpsContainerUI : MonoBehaviour
         _button.onClick.RemoveAllListeners();
         _button.onClick.AddListener(() =>
         {
-            SceneManager.LoadScene("DummyARScene");
+            SceneManager.LoadScene("VPS_Goo");
         });
 
         _image.sprite = null;
