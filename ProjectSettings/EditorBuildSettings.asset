@@ -7,10 +7,10 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/WorldMap.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    guid: 4a0b5a8e09ec66a4e94bfedc35a0650c
   - enabled: 1
-    path: Assets/Scenes/DummyARScene.unity
-    guid: c5ac259c351a3624cbd8719dbd16769c
+    path: Assets/Scenes/VPS_Goo.unity
+    guid: ce8fa9e854e881248ae9a3000fdeb668
   m_configObjects:
     Niantic.Lightship.AR.LightshipSettings: {fileID: 11400000, guid: 7eaaec671dc2ac146a5d3b39b15f25b4,
       type: 2}
