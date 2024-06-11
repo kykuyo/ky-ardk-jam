@@ -12,20 +12,21 @@ public class GooGlobeGenerator : MonoBehaviour
     private float _coneRadius = 5f;
 
     [SerializeField]
-    private float _startDelay = 2f;
-
-    [SerializeField]
     private float _generationInterval = 0.5f;
 
     private Camera _mainCamera;
     private int _globesGenerated = 0;
 
-    private const int MaxGenerationAttempts = 10;
+    private const int MAX_GENERATION_ATTEMPTS = 10;
 
     private void Start()
     {
         _mainCamera = Camera.main;
-        InvokeRepeating(nameof(TryGenerateGlobe), _startDelay, _generationInterval);
+    }
+
+    public void StartGeneration()
+    {
+        InvokeRepeating(nameof(TryGenerateGlobe), 0, _generationInterval);
     }
 
     private void TryGenerateGlobe()
@@ -36,7 +37,7 @@ public class GooGlobeGenerator : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < MaxGenerationAttempts; i++)
+        for (int i = 0; i < MAX_GENERATION_ATTEMPTS; i++)
         {
             Vector3 randomDirection = Random.insideUnitSphere * _coneRadius;
             Vector3 direction = (_mainCamera.transform.forward + randomDirection).normalized;
