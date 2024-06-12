@@ -4,6 +4,7 @@ using Niantic.Lightship.Maps.Core;
 using Niantic.Lightship.Maps.Core.Coordinates;
 using Niantic.Lightship.Maps.MapLayers.Components;
 using Niantic.Lightship.Maps.ObjectPools;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class BerriesSpawner : MonoBehaviour
@@ -13,6 +14,9 @@ public class BerriesSpawner : MonoBehaviour
 
     [SerializeField]
     private LayerGameObjectPlacement _layerGameObjectPlacement;
+
+    [SerializeField]
+    private int _berriesPerTile = 10;
 
     private readonly Dictionary<ulong, List<PooledObject<GameObject>>> _tileObjects = new();
 
@@ -41,13 +45,15 @@ public class BerriesSpawner : MonoBehaviour
     private void SpawnObjects(IMapTile tile, IMapTileObject @object)
     {
         System.Random random = new();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < _berriesPerTile; i++)
         {
             Vector3 randomPosition = GenerateRandomPosition(@object.Transform, random);
             LatLng randomMapLocation = _lightshipMapView.SceneToLatLng(randomPosition);
             PooledObject<GameObject> obj = _layerGameObjectPlacement.PlaceInstance(
                 randomMapLocation
             );
+
+            obj.Value.transform.GetComponent<Berry>().obj = obj;
 
             if (!_tileObjects.TryGetValue(tile.Id, out var pooledObjects))
             {
