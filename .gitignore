@@ -26,6 +26,8 @@
 /Assets/Settings/URP-Balanced.asset
 # Ignore specific URP-HighFidelity.asset file
 Assets\Settings\URP-HighFidelity.asset
+# Ignore specific EditorBuildSettings.asset file
+ProjectSettings\EditorBuildSettings.asset
 
 # Visual Studio cache directory
 .vs/
