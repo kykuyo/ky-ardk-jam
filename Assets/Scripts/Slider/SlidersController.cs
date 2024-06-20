@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace Sliders
 {
+    public static class PrefsKeysPointer
+    {
+        public static string tutorial = "tutorial";
+    }
     public class SlidersController : MonoBehaviour
     {
         [SerializeField] private Button _nextButton;
@@ -15,7 +19,7 @@ namespace Sliders
         private SliderInitializizer _currentSlider;
         private int _sliderCount = 0;
 
-        private readonly string _slidersKeyOnPlayerPref;
+        private readonly string _slidersKeyOnPlayerPref = PrefsKeysPointer.tutorial;
         private bool _isTutorialAlreadyRead;
 
         private void Awake()
@@ -34,6 +38,20 @@ namespace Sliders
             _currentSlider.OnInit();
         }
 
+        public void OnReset()
+        {
+#if !UNITY_EDITOR
+            if (AlreadyReadTutorial())
+            {
+                CloseSliders();
+                return;
+            }
+#endif
+            _sliderCount = 0;
+            _currentSlider = _slidersInitializers[_sliderCount];
+            _currentSlider.OnInit();
+            _nextButton.gameObject.SetActive(true);
+        }
 
         private bool AlreadyReadTutorial()
         {
