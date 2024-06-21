@@ -12,12 +12,11 @@ GameObject:
   - component: {fileID: 5342729783120985769}
   - component: {fileID: 2504750035196640323}
   - component: {fileID: 22243175506056858}
-  - component: {fileID: 148260852059344487}
-  - component: {fileID: 5559057364131649514}
+  - component: {fileID: -1163507075007033434}
   - component: {fileID: 1851837941624653873}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Goo
-  m_TagString: Untagged
+  m_TagString: Goo
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -110,32 +109,11 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 1
+  m_IsKinematic: 1
+  m_Interpolate: 2
   m_Constraints: 0
-  m_CollisionDetection: 2
---- !u!135 &148260852059344487
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2829884802047166125}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &5559057364131649514
+  m_CollisionDetection: 1
+--- !u!65 &-1163507075007033434
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,14 +123,14 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1073742327
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -168,5 +146,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086fb4301e0ec5c4bb8ab0cdfe3c95d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxLife: 100
-  _deformationAmount: 0.65
+  _deformScale: {x: 0.25, y: 0.025, z: 0.25}
+  _scaleReductionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

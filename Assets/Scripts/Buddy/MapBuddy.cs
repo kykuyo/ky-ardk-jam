@@ -18,7 +18,7 @@ public class MapBuddy : MonoBehaviour
     private Transform _target;
     private bool isEating = false;
 
-    public static event Action<int> OnBerryEaten;
+    public static event Action<float> OnBerryEaten;
 
     private void Start()
     {

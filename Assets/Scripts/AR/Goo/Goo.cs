@@ -1,115 +1,90 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class Goo : MonoBehaviour
 {
     [SerializeField]
-    private float _maxLife = 100f;
+    protected Vector3 _deformScale = new(0.35f, 0.1f, 0.35f);
 
     [SerializeField]
-    private float _deformationAmount = 0.5f;
+    protected AnimationCurve _scaleReductionCurve = AnimationCurve.Linear(0, 1, 1, 0);
 
-    private float _currentLife;
-    private Vector3 _initialScale;
-    private bool _hasCollided = false;
-    private GooPool _gooPool;
+    protected Vector3 _initialScale;
+
+    protected Action<GameObject> _returnToPool;
+
+    public int Team { get; set; }
+
+    [HideInInspector]
+    public bool HasCollided { get; protected set; } = false;
+
+    public static event Action OnGooCreated;
+    public static event Action OnGooDestroyed;
 
     private void Awake()
     {
         _initialScale = transform.localScale;
-        _gooPool = FindObjectOfType<GooPool>();
     }
 
-    private void OnEnable()
+    public void Initialize(Action<GameObject> returnToPool, float size)
     {
-        InitGoo();
+        _initialScale = new Vector3(size, size, size);
+        _returnToPool = returnToPool;
     }
 
-    public void InitGoo()
+    protected void InvokeOnGooCreated()
     {
-        _currentLife = _maxLife;
-        transform.localScale = _initialScale;
-        _hasCollided = false;
-        GetComponent<Rigidbody>().isKinematic = false;
-
-        if (TryGetComponent(out SphereCollider sphereCollider))
-        {
-            sphereCollider.enabled = true;
-        }
-
-        if (TryGetComponent(out BoxCollider boxCollider))
-        {
-            boxCollider.enabled = false;
-        }
-
-        StartCoroutine(DisposeAfterSeconds(3));
+        OnGooCreated?.Invoke();
     }
 
-    private IEnumerator DisposeAfterSeconds(float seconds)
+    protected void InvokeOnGooDestroyed()
     {
-        yield return new WaitForSeconds(seconds);
-        if (!_hasCollided)
-        {
-            _gooPool.ReturnGoo(gameObject);
-        }
+        OnGooDestroyed?.Invoke();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void Clean()
     {
-        if (collision.gameObject.TryGetComponent(out GooGlobe _))
-        {
-            return;
-        }
-        _hasCollided = true;
-        Deform(collision);
+        StartCoroutine(ReduceScaleAndClean());
     }
 
-    private void Deform(Collision collision)
+    public void SetMaterial(Material material)
     {
-        GetComponent<Rigidbody>().isKinematic = true;
-        Vector3 newScale = transform.localScale;
-        newScale.y *= 1 - _deformationAmount;
-
-        transform.localScale = newScale;
-        transform.position = collision.contacts[0].point;
-
-        Vector3 surfaceNormal = collision.contacts[0].normal;
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, surfaceNormal);
-        transform.rotation = rotation;
-
-        if (TryGetComponent(out SphereCollider sphereCollider))
-        {
-            sphereCollider.enabled = false;
-        }
-
-        if (TryGetComponent(out BoxCollider boxCollider))
-        {
-            boxCollider.enabled = true;
-            boxCollider.size = new Vector3(1, 1 - _deformationAmount, 1);
-        }
+        GetComponent<Renderer>().material = material;
     }
 
-    public void DecreaseLife(float amount)
+    public void ApplyDeform()
     {
-        _currentLife -= amount;
+        transform.localScale = _deformScale;
+    }
 
-        if (_currentLife <= 0 || transform.localScale.x <= _initialScale.x / 3)
+    private IEnumerator ReduceScaleAndClean()
+    {
+        float startTime = Time.time;
+        while (transform.localScale.magnitude > 0.01f)
         {
-            _gooPool.ReturnGoo(gameObject);
+            float t =
+                (Time.time - startTime)
+                / _scaleReductionCurve.keys[_scaleReductionCurve.length - 1].time;
+            transform.localScale = Vector3.Lerp(
+                transform.localScale,
+                Vector3.zero,
+                _scaleReductionCurve.Evaluate(t)
+            );
+            yield return null;
+        }
+
+        transform.localScale = Vector3.zero;
+
+        OnGooDestroyed?.Invoke();
+
+        if (_returnToPool != null)
+        {
+            _returnToPool?.Invoke(gameObject);
         }
         else
         {
-            UpdateScale();
+            Destroy(gameObject);
         }
-    }
-
-    private void UpdateScale()
-    {
-        float scaleFactor = _currentLife / _maxLife;
-        transform.localScale = new Vector3(
-            transform.localScale.x * scaleFactor,
-            transform.localScale.y * scaleFactor,
-            transform.localScale.z * scaleFactor
-        );
     }
 }
