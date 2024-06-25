@@ -1,34 +1,67 @@
+using System;
 using UnityEngine;
 
-public class GooSpawner : MonoBehaviour
+public class GooSpawner : GenericSpawner<PlayerGoo>
 {
     [SerializeField]
-    private GooPool _gooPool;
+    private GooTeamMaterials _gooTeamMaterials;
 
     [SerializeField]
-    private float _speed = 8f;
+    private float _staminaCostPerShot = 0.1f;
 
-    [SerializeField]
-    private int _numberOfGoo = 150;
-
-    [SerializeField]
-    private float _spreadAngle = 14f;
-
-    public void SpawnGoo(Vector3 spawnPoint, Vector3 endPoint)
+    protected override void Awake()
     {
-        Vector3 direction = (endPoint - spawnPoint).normalized;
+        base.Awake();
+        VpsManager.OnGooCapacityStatusChanged += OnGooCapacityStatusChanged;
+        GameManager.Instance.OnStaminaChanged += OnStaminaChanged;
+    }
 
-        for (int i = 0; i < _numberOfGoo; i++)
+    private void OnDestroy()
+    {
+        VpsManager.OnGooCapacityStatusChanged -= OnGooCapacityStatusChanged;
+        GameManager.Instance.OnStaminaChanged -= OnStaminaChanged;
+    }
+
+    private void OnGooCapacityStatusChanged(bool isCapacityReached)
+    {
+        IsBlocked = isCapacityReached;
+    }
+
+    private void OnStaminaChanged(float amount)
+    {
+        IsBlocked = amount <= 0;
+    }
+
+    public void SetPoolParent(Transform parentTransform)
+    {
+        SetParentTransform(parentTransform);
+    }
+
+    protected override void SpawnProjectile()
+    {
+        if (GameManager.Instance.BuddyStamina >= _staminaCostPerShot)
         {
-            Vector3 variation =
-                Quaternion.AngleAxis(Random.Range(-_spreadAngle, _spreadAngle), Vector3.up)
-                * Quaternion.AngleAxis(Random.Range(-_spreadAngle, _spreadAngle), Vector3.right)
-                * direction;
+            base.SpawnProjectile();
+            GameManager.Instance.DecreaseBuddyStamina(_staminaCostPerShot);
+        }
+        else
+        {
+            Debug.Log("Not enough stamina to shoot.");
+        }
+    }
 
-            GameObject gooGO = _gooPool.GetGoo(spawnPoint, Quaternion.identity);
+    protected override void ConfigureProjectile(PlayerGoo goo)
+    {
+        goo.Team = GameManager.Instance.Team;
 
-            Rigidbody rb = gooGO.GetComponent<Rigidbody>();
-            rb.velocity = variation * _speed;
+        Material teamMaterial = _gooTeamMaterials.GetTeamMaterial(goo.Team);
+        if (teamMaterial != null)
+        {
+            goo.SetMaterial(teamMaterial);
+        }
+        else
+        {
+            Debug.LogError($"Material not found for team {goo.Team}");
         }
     }
 }

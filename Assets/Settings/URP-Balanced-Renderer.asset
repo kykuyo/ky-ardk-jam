@@ -29,10 +29,10 @@ MonoBehaviour:
   _renderTargetId: _RenderMetaballsRT
   _layerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 448
   _blurMaterial: {fileID: 2100000, guid: 6ae904cc4b426ca409512d21eb0bc483, type: 2}
   _blitMaterial: {fileID: 2100000, guid: a1ca9a02f13dc9745abe7996159fc208, type: 2}
-  _blurPasses: 10
+  _blurPasses: 8
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

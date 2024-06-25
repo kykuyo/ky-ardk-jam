@@ -8,7 +8,7 @@ public class GooGlobe : MonoBehaviour
     private float _maxLife = 100f;
 
     [SerializeField]
-    private float _damagePerTap = 20f;
+    private float _damagePerBubble = 0.2f;
 
     [Header("Behaviour")]
     [SerializeField]
@@ -30,7 +30,7 @@ public class GooGlobe : MonoBehaviour
     [SerializeField]
     private float _raycastDistance = 10f;
 
-    private GooSpawner _gooSpawner;
+    //private GooSpawner _gooSpawner;
 
     private float _currentLife;
     private Vector3 _originalScale;
@@ -45,20 +45,23 @@ public class GooGlobe : MonoBehaviour
 
     private void Start()
     {
-        _gooSpawner = FindObjectOfType<GooSpawner>();
+        //_gooSpawner = FindObjectOfType<GooSpawner>();
         StartCoroutine(ExplodeAfterSeconds(_timeToExplode));
     }
 
-    private void OnMouseDown()
+    private void OnCollisionEnter(Collision other)
     {
-        _currentLife -= _damagePerTap;
-        if (_currentLife <= 0)
+        if (other.gameObject.CompareTag("Bubble"))
         {
-            Destroy(gameObject);
-        }
-        else
-        {
-            StartCoroutine(AnimateScale());
+            _currentLife -= _damagePerBubble;
+            if (_currentLife <= 0)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                StartCoroutine(AnimateScale());
+            }
         }
     }
 
@@ -67,7 +70,7 @@ public class GooGlobe : MonoBehaviour
         yield return new WaitForSeconds(seconds);
 
         Vector3 bestPosition = FindBestGooSpawnPosition();
-        _gooSpawner.SpawnGoo(transform.position, bestPosition);
+        // _gooSpawner.SpawnGoo(transform.position, bestPosition);
 
         Destroy(gameObject);
     }
@@ -85,7 +88,7 @@ public class GooGlobe : MonoBehaviour
 
             direction = Vector3.Reflect(direction, transform.position - cameraPosition).normalized;
 
-            Ray ray = new Ray(transform.position, direction);
+            Ray ray = new(transform.position, direction);
             Debug.DrawRay(ray.origin, ray.direction * _raycastDistance, Color.red);
             if (Physics.Raycast(ray, out RaycastHit hit, _raycastDistance))
             {

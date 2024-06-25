@@ -8,7 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: StepAndClip
-  m_Shader: {fileID: -6465566751694194690, guid: 90a54b4330a955d43bc30c1fc1e4dc8f, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 90a54b4330a955d43bc30c1fc1e4dc8f,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -46,7 +47,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaStep: 0
-    - _AlphaStep2: 0.192
+    - _AlphaStep2: 0.247
     - _Clip: 1
     - _ColorStep: 0
     - _ColorStep2: 0.233

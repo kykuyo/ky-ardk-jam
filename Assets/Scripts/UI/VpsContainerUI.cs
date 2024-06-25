@@ -1,8 +1,17 @@
+using System;
 using Niantic.Lightship.AR.VpsCoverage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+[Serializable]
+public class CurrentVpsData
+{
+    public string Identifier;
+    public string Name;
+    public string ImageURL;
+}
 
 public class VpsContainerUI : MonoBehaviour
 {
@@ -16,7 +25,7 @@ public class VpsContainerUI : MonoBehaviour
     private TMP_Text _text;
 
     [SerializeField]
-    private Image _image;
+    private RawImage _image;
 
     [SerializeField]
     private Button _button;
@@ -30,10 +39,20 @@ public class VpsContainerUI : MonoBehaviour
         _button.onClick.RemoveAllListeners();
         _button.onClick.AddListener(() =>
         {
+            CurrentVpsData data =
+                new()
+                {
+                    Identifier = areaTarget.Target.Identifier,
+                    Name = areaTarget.Target.Name,
+                    ImageURL = areaTarget.Target.ImageURL
+                };
+
+            GameManager.Instance.SetCurrentVpsData(data);
+
             SceneManager.LoadScene("VPS_Goo");
         });
 
-        _image.sprite = null;
+        _image.texture = null;
 
         if (areaTarget.Target.ImageURL == null)
         {
@@ -48,11 +67,7 @@ public class VpsContainerUI : MonoBehaviour
                 {
                     return;
                 }
-                _image.sprite = Sprite.Create(
-                    (Texture2D)downLoadedImage,
-                    new Rect(0, 0, downLoadedImage.width, downLoadedImage.height),
-                    new Vector2(0.5f, 0.5f)
-                );
+                _image.texture = downLoadedImage;
             }
         );
     }
