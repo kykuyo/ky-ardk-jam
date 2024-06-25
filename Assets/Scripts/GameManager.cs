@@ -4,6 +4,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public float MaxStamina => MAX_STAMINA;
     private const float MAX_STAMINA = 100;
 
     public float BuddyStamina
@@ -24,6 +26,8 @@ public class GameManager : MonoBehaviour
     private float buddyStamina = 0;
 
     public int Team { get; private set; }
+
+    public CurrentVpsData CurrentVpsData { get; private set; }
 
     public event Action<float> OnStaminaChanged;
 
@@ -58,6 +62,11 @@ public class GameManager : MonoBehaviour
     private void SetTeam(int team)
     {
         Team = team;
+    }
+
+    public void SetCurrentVpsData(CurrentVpsData data)
+    {
+        CurrentVpsData = data;
     }
 
     private void ResetGame()

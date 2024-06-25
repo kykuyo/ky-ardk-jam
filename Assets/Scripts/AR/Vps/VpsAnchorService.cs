@@ -130,7 +130,7 @@ public class VpsAnchorService : MonoBehaviour
             }
         }
 
-        AnchorData anchorData = new() { date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss") };
+        AnchorData anchorData = new() { date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") };
 
         foreach (var goo in _goos)
         {
@@ -169,17 +169,42 @@ public class VpsAnchorService : MonoBehaviour
             return;
         }
 
-        string data = Newtonsoft.Json.JsonConvert.SerializeObject(GetAnchorData());
+        AnchorData currentAnchorData = GetAnchorData();
+
+        string vpsAnchorData = JsonUtility.ToJson(currentAnchorData);
 
         AnchorData anchorData = await Firebase.PatchDataAsync<AnchorData>(
             $"/vps-anchors/{_vpsId}",
-            data
-        // _cts.Token
+            vpsAnchorData
+        //_cts.Token
         );
 
         if (anchorData == null)
         {
             Debug.LogError("Failed to send anchor data");
+            return;
+        }
+
+        VpsStatus status =
+            new()
+            {
+                team_0_score = currentAnchorData.team_0.Count,
+                team_1_score = currentAnchorData.team_1.Count,
+                team_2_score = currentAnchorData.team_2.Count,
+                date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+        string vpsStatusData = JsonUtility.ToJson(status);
+
+        VpsStatus vpsStatus = await Firebase.PatchDataAsync<VpsStatus>(
+            $"/vps-status/{_vpsId}",
+            vpsStatusData
+        //_cts.Token
+        );
+
+        if (vpsStatus == null)
+        {
+            Debug.LogError("Failed to update VPS status");
             return;
         }
 

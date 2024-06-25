@@ -31,6 +31,8 @@ public class GenericSpawner<T> : MonoBehaviour
 
     public bool IsBlocked { get; set; } = false;
 
+    public static event System.Action<Vector3> OnProjectileSpawned;
+
     public void SetParentTransform(Transform parentTransform)
     {
         _parentTransform = parentTransform;
@@ -115,6 +117,8 @@ public class GenericSpawner<T> : MonoBehaviour
             direction.Normalize();
             projectileScript.Launch(spawnPosition, direction, _jetSpeed);
             ConfigureProjectile(projectileScript);
+
+            OnProjectileSpawned?.Invoke(direction);
         }
     }
 

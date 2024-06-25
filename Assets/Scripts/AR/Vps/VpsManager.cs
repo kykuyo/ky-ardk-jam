@@ -4,16 +4,27 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
+using System.Threading;
+
+[Serializable]
+public class GameMode
+{
+    public GameObject spawner;
+    public Image buttonImage;
+}
+
+[Serializable]
+public class VpsStatus
+{
+    public bool isVpsActive;
+    public int team_0_score;
+    public int team_1_score;
+    public int team_2_score;
+    public string date;
+}
 
 public class VpsManager : MonoBehaviour
 {
-    [Serializable]
-    public class GameMode
-    {
-        public GameObject spawner;
-        public Image buttonImage;
-    }
-
     [SerializeField]
     private GameMode gooMode;
 
@@ -41,11 +52,15 @@ public class VpsManager : MonoBehaviour
 
     public int TotalGoos { get; private set; }
 
+    private CancellationTokenSource _cts;
+
     private void Awake()
     {
         Goo.OnGooCreated += UpdateGooCapacityStatus;
         Goo.OnGooDestroyed += UpdateGooCapacityStatus;
         VpsAnchorService.OnGooCreated += UpdateGooCapacityStatus;
+
+        _cts = new CancellationTokenSource();
     }
 
     private void OnDestroy()
@@ -53,17 +68,48 @@ public class VpsManager : MonoBehaviour
         Goo.OnGooCreated -= UpdateGooCapacityStatus;
         Goo.OnGooDestroyed -= UpdateGooCapacityStatus;
         VpsAnchorService.OnGooCreated -= UpdateGooCapacityStatus;
+
+        _cts.Cancel();
     }
 
     // TODO - Test if this is necessary
     private void OnApplicationQuit()
     {
-        //OnVpsWillClose?.Invoke();
+        OnVpsWillClose?.Invoke();
+        UpdateVpsStatus(false);
     }
 
     private void Start()
     {
         SetActiveMode(gooMode, bubblesMode);
+        UpdateVpsStatus(true);
+    }
+
+    private async void UpdateVpsStatus(bool isActive)
+    {
+        CurrentVpsData currentVpsData = GameManager.Instance.CurrentVpsData;
+        VpsStatus status =
+            new()
+            {
+                isVpsActive = isActive,
+                date = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+        string data = JsonUtility.ToJson(status);
+
+        Debug.Log($"Updating VPS status: {data}");
+
+        VpsStatus vpsStatus = await Firebase.PatchDataAsync<VpsStatus>(
+            $"/vps-status/{currentVpsData.Identifier}",
+            data
+        //_cts.Token
+        );
+
+        if (vpsStatus == null)
+        {
+            Debug.LogError("Failed to update VPS status");
+            return;
+        }
     }
 
     private void UpdateGooCapacityStatus()
@@ -128,6 +174,7 @@ public class VpsManager : MonoBehaviour
     {
         OnVpsWillClose?.Invoke();
         _closingPanel.gameObject.SetActive(true);
+        UpdateVpsStatus(false);
         Invoke(nameof(LoadWorldMap), 2);
     }
 

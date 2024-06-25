@@ -47,8 +47,7 @@ public class VpsContainerUI : MonoBehaviour
                     ImageURL = areaTarget.Target.ImageURL
                 };
 
-            PlayerPrefs.SetString("CurrentVpsData", JsonUtility.ToJson(data));
-            PlayerPrefs.Save();
+            GameManager.Instance.SetCurrentVpsData(data);
 
             SceneManager.LoadScene("VPS_Goo");
         });

@@ -39,8 +39,6 @@ public class VpsTracker : MonoBehaviour
 
     private ARLocation _arLocation;
 
-    private CurrentVpsData _currentVpsData;
-
     private bool hasNotifiedStartTracking = false;
 
     public static event Action<string> OnVpsTrackingStarted;
@@ -52,32 +50,6 @@ public class VpsTracker : MonoBehaviour
         StartCoroutine(CheckDirectionRoutine());
     }
 
-    private void LoadCurrentVps()
-    {
-        string currentVpsData = PlayerPrefs.GetString("CurrentVpsData");
-        if (string.IsNullOrEmpty(currentVpsData))
-        {
-            return;
-        }
-        CurrentVpsData data = JsonUtility.FromJson<CurrentVpsData>(currentVpsData);
-        _currentVpsData = data;
-
-        _name.text = data.Name;
-
-        Debug.Log($"Loading VPS: {data.Name}");
-        _coverageClientManager.TryGetImageFromUrl(
-            data.ImageURL,
-            downLoadedImage =>
-            {
-                if (downLoadedImage == null)
-                {
-                    return;
-                }
-                _image.texture = downLoadedImage;
-            }
-        );
-    }
-
     private void OnLocationTrackingStateChanged(ARLocationTrackedEventArgs args)
     {
         if (args.Tracking)
@@ -86,7 +58,20 @@ public class VpsTracker : MonoBehaviour
             _status.text = "Tracking the location...";
             if (!hasNotifiedStartTracking)
             {
-                LoadCurrentVps();
+                CurrentVpsData data = GameManager.Instance.CurrentVpsData;
+
+                _name.text = data.Name;
+                _coverageClientManager.TryGetImageFromUrl(
+                    data.ImageURL,
+                    downLoadedImage =>
+                    {
+                        if (downLoadedImage == null)
+                        {
+                            return;
+                        }
+                        _image.texture = downLoadedImage;
+                    }
+                );
 
                 /**
                 * The VPS identifier is used to uniquely identify the VPS.
@@ -94,9 +79,10 @@ public class VpsTracker : MonoBehaviour
                 * Otherwise, the VPS name will be used as the identifier.
                 * Warning: The name is not guaranteed to be unique. This is just for testing purposes.
                 */
-                string vpsId = !string.IsNullOrEmpty(_currentVpsData.Identifier)
-                    ? _currentVpsData.Identifier
-                    : Regex.Replace(_currentVpsData.Name, "[^a-zA-Z0-9]", "");
+
+                string vpsId = !string.IsNullOrEmpty(data.Identifier)
+                    ? data.Identifier
+                    : Regex.Replace(data.Name, "[^a-zA-Z0-9]", "");
 
                 Debug.Log($"VPS Tracking started for {vpsId}");
 
