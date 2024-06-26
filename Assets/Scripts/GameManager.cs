@@ -1,12 +1,15 @@
 using System;
+using Sliders;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
-
-    public float MaxStamina => MAX_STAMINA;
+    private const string PLAYER_TEAM_KEY = "PlayerTeam";
     private const float MAX_STAMINA = 100;
+    public float MaxStamina => MAX_STAMINA;
+
+    public static GameManager Instance { get; private set; }
 
     public float BuddyStamina
     {
@@ -31,8 +34,11 @@ public class GameManager : MonoBehaviour
 
     public event Action<float> OnStaminaChanged;
 
+    public event Action OnStartTutorial;
+
     private void Awake()
     {
+        LoadTeam();
         if (Instance == null)
         {
             Instance = this;
@@ -46,32 +52,39 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Team = PlayerPrefs.GetInt("SelectedTeam");
         MapBuddy.OnBerryEaten += FeedBuddy;
-        TeamManager.OnTeamSelected += SetTeam;
-        TeamManager.OnGameReset += ResetGame;
+        TeamSelector.OnTeamSelected += SetTeam;
+        ResetGame.OnGameReset += Reset;
     }
 
     private void OnDestroy()
     {
-        TeamManager.OnTeamSelected -= SetTeam;
-        TeamManager.OnGameReset -= ResetGame;
         MapBuddy.OnBerryEaten -= FeedBuddy;
+        TeamSelector.OnTeamSelected -= SetTeam;
+        ResetGame.OnGameReset -= Reset;
+    }
+
+    private void LoadTeam()
+    {
+        if (!PlayerPrefs.HasKey(PLAYER_TEAM_KEY))
+        {
+            OnStartTutorial?.Invoke();
+            return;
+        }
+
+        Team = PlayerPrefs.GetInt(PLAYER_TEAM_KEY);
     }
 
     private void SetTeam(int team)
     {
         Team = team;
+        PlayerPrefs.SetInt(PLAYER_TEAM_KEY, team);
+        PlayerPrefs.Save();
     }
 
     public void SetCurrentVpsData(CurrentVpsData data)
     {
         CurrentVpsData = data;
-    }
-
-    private void ResetGame()
-    {
-        BuddyStamina = 0;
     }
 
     public void FeedBuddy(float amount)
@@ -82,5 +95,17 @@ public class GameManager : MonoBehaviour
     public void DecreaseBuddyStamina(float amount)
     {
         BuddyStamina -= amount;
+    }
+
+    private void Reset()
+    {
+        PlayerPrefs.SetInt(PrefsKeysPointer.tutorial, 0);
+        PlayerPrefs.DeleteKey(PLAYER_TEAM_KEY);
+        Invoke(nameof(ReloadScene), 1);
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

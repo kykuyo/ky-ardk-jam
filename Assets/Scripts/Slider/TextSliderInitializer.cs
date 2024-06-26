@@ -5,13 +5,16 @@ using UnityEngine;
 
 namespace Sliders
 {
-
     public class TextSliderInitializer : SliderInitializizer
     {
-        [SerializeField] private TMP_Text _text;
+        [SerializeField]
+        private TMP_Text _text;
 
-        [SerializeField] private GameObject _background;
-        [SerializeField] private float _fadeDuration;
+        [SerializeField]
+        private GameObject _background;
+
+        [SerializeField]
+        private float _fadeDuration;
 
         private void Awake()
         {
@@ -48,8 +51,6 @@ namespace Sliders
             color.a = 1;
             _text.color = color;
         }
-
-
 
         IEnumerator FadeTextToZeroAlpha()
         {

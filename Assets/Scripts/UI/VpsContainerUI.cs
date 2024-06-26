@@ -1,5 +1,6 @@
 using System;
 using Niantic.Lightship.AR.VpsCoverage;
+using Sliders;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,10 +29,42 @@ public class VpsContainerUI : MonoBehaviour
     private RawImage _image;
 
     [SerializeField]
+    private PieChart _pieChart;
+
+    [SerializeField]
     private Button _button;
+
+    [SerializeField]
+    private Button _testSceneButton;
+
+    private AreaTarget _areaTarget;
+
+    private void Start()
+    {
+        VpsService.Instance.OnVpsStatusReceived += OnVpsStatusReceived;
+    }
+
+    private void OnDestroy()
+    {
+        VpsService.Instance.OnVpsStatusReceived -= OnVpsStatusReceived;
+    }
+
+    private void OnVpsStatusReceived(string vpsId, VpsStatus status)
+    {
+        if (vpsId != _areaTarget.Target.Identifier)
+        {
+            return;
+        }
+
+        _pieChart.SetValues(
+            new float[] { status.team_0_score, status.team_1_score, status.team_2_score }
+        );
+    }
 
     public void ShowVpsContainerUI(AreaTarget areaTarget)
     {
+        _areaTarget = areaTarget;
+        _pieChart.SetValues(new float[] { 0, 0, 0 });
         _panel.gameObject.SetActive(true);
 
         _text.text = areaTarget.Target.Name;
@@ -50,6 +83,21 @@ public class VpsContainerUI : MonoBehaviour
             GameManager.Instance.SetCurrentVpsData(data);
 
             SceneManager.LoadScene("VPS_Goo");
+        });
+
+        _testSceneButton.onClick.RemoveAllListeners();
+        _testSceneButton.onClick.AddListener(() =>
+        {
+            CurrentVpsData data =
+                new()
+                {
+                    Identifier = areaTarget.Target.Identifier,
+                    Name = areaTarget.Target.Name,
+                    ImageURL = areaTarget.Target.ImageURL
+                };
+
+            GameManager.Instance.SetCurrentVpsData(data);
+            SceneManager.LoadScene("VPS_TEST");
         });
 
         _image.texture = null;

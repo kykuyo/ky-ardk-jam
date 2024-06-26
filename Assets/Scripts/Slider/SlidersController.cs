@@ -9,12 +9,17 @@ namespace Sliders
     {
         public static string tutorial = "tutorial";
     }
+
     public class SlidersController : MonoBehaviour
     {
-        [SerializeField] private Button _nextButton;
-        [SerializeField] private SliderInitializizer[] _slidersInitializers;
-        [SerializeField] private float _secondsToWait;
+        [SerializeField]
+        private Button _nextButton;
 
+        [SerializeField]
+        private SliderInitializizer[] _slidersInitializers;
+
+        [SerializeField]
+        private float _secondsToWait;
 
         private SliderInitializizer _currentSlider;
         private int _sliderCount = 0;
@@ -24,13 +29,11 @@ namespace Sliders
 
         private void Awake()
         {
-#if !UNITY_EDITOR
             if (AlreadyReadTutorial())
             {
                 CloseSliders();
                 return;
             }
-#endif
 
             _nextButton.onClick.AddListener(OnClickNextButton);
             _currentSlider = _slidersInitializers[_sliderCount];
@@ -40,13 +43,12 @@ namespace Sliders
 
         public void OnReset()
         {
-#if !UNITY_EDITOR
             if (AlreadyReadTutorial())
             {
                 CloseSliders();
                 return;
             }
-#endif
+
             _sliderCount = 0;
             _currentSlider = _slidersInitializers[_sliderCount];
             _currentSlider.OnInit();
@@ -73,19 +75,19 @@ namespace Sliders
 
         private void OnClickNextButton()
         {
+            Debug.Log("Next Button Clicked");
             StartCoroutine(WaitToContinue());
             _currentSlider.OnClose();
 
             _sliderCount++;
 
-            if(_sliderCount > _slidersInitializers.Length - 1)
+            if (_sliderCount > _slidersInitializers.Length - 1)
             {
                 CloseSliders();
-#if !UNITY_EDITOR
+
                 PlayerPrefs.SetInt(_slidersKeyOnPlayerPref, 1);
-#endif
+
                 return;
-                
             }
             _currentSlider = _slidersInitializers[_sliderCount];
 
@@ -110,12 +112,10 @@ namespace Sliders
         }
     }
 
-
     public abstract class SliderInitializizer : MonoBehaviour
     {
         public abstract void OnInit();
 
         public abstract void OnClose();
-
     }
 }

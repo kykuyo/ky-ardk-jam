@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,20 +16,43 @@ namespace Sliders
         [SerializeField]
         private TMP_Text[] _texts;
 
-        private void Start()
-        {
-            SetValues(_values);
-        }
-        
         public void SetValues(float[] valueToSet)
         {
+            bool allValuesAreZero = valueToSet.All(value => value == 0);
+            SetImagesActive(!allValuesAreZero);
+
+            if (allValuesAreZero || _pieChartsLevels.Length != valueToSet.Length)
+            {
+                if (_pieChartsLevels.Length != valueToSet.Length)
+                {
+                    Debug.LogError(
+                        "The number of pie charts and the number of values must be the same."
+                    );
+                }
+                return;
+            }
+
+            bool hasTexts = _texts.Length > 0;
             float totalValue = 0;
 
             for (int i = 0; i < _pieChartsLevels.Length; i++)
             {
-                totalValue += FindPercentage(valueToSet, i);
+                float percentage = FindPercentage(valueToSet, i);
+                totalValue += percentage;
                 _pieChartsLevels[i].fillAmount = totalValue;
-                _texts[i].text = valueToSet.ToString();
+
+                if (hasTexts && _texts[i] != null)
+                {
+                    _texts[i].text = $"{percentage * 100:F2}%";
+                }
+            }
+        }
+
+        private void SetImagesActive(bool isActive)
+        {
+            for (int i = 0; i < _pieChartsLevels.Length; i++)
+            {
+                _pieChartsLevels[i].gameObject.SetActive(isActive);
             }
         }
 

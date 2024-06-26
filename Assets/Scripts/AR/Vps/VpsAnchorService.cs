@@ -59,8 +59,8 @@ public class VpsAnchorService : MonoBehaviour
     public async void LoadAnchorData(string vpsId)
     {
         AnchorData anchor = await Firebase.GetDataAsync<AnchorData>(
-            $"/vps-anchors/{vpsId}",
-            _cts.Token
+            $"/vps-anchors/{vpsId}"
+        //_cts.Token
         );
 
         if (anchor == null)

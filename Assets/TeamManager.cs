@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class TeamManager : MonoBehaviour
 {
+
+    
     [SerializeField]
     private RectTransform _teamSelectionPanel;
 
@@ -19,9 +21,9 @@ public class TeamManager : MonoBehaviour
 
     private void Start()
     {
-        if (PlayerPrefs.HasKey("SelectedTeam"))
+        if (PlayerPrefs.HasKey("PlayerTeam"))
         {
-            _selectedTeam = PlayerPrefs.GetInt("SelectedTeam");
+            _selectedTeam = PlayerPrefs.GetInt("PlayerTeam");
             _teamSelectionPanel.gameObject.SetActive(false);
         }
         else
@@ -42,7 +44,7 @@ public class TeamManager : MonoBehaviour
     {
         if (_selectedTeam != -1)
         {
-            PlayerPrefs.SetInt("SelectedTeam", _selectedTeam);
+            PlayerPrefs.SetInt("PlayerTeam", _selectedTeam);
             PlayerPrefs.Save();
             _teamSelectionPanel.gameObject.SetActive(false);
         }

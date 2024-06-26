@@ -79,8 +79,8 @@ public class MapBuddy : MonoBehaviour
     private IEnumerator EatBerry()
     {
         _isEating = true;
-        yield return new WaitForSeconds(_waitTime);
         _animator.SetTrigger("Attack");
+        yield return new WaitForSeconds(_waitTime);
         Berry berry = _target.GetComponent<Berry>();
         berry.obj.Dispose();
         OnBerryEaten?.Invoke(berry.StaminaAmount);

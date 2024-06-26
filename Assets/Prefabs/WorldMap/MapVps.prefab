@@ -68,14 +68,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5764f59cad727b2429c3cd3a6d42bdf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxInteractionDistance: 50
+  maxInteractionDistance: 20
+  _teamMaterial: {fileID: 11400000, guid: 3a4c47b6bcdd14e4b8955e5de08b19b8, type: 2}
   vpsStatus:
     isVpsActive: 0
     team_0_score: 0
     team_1_score: 0
     team_2_score: 0
     date: 
-  teamMaterial: {fileID: 11400000, guid: e98659a4ad7415f4099d6e2172f4f3fb, type: 2}
 --- !u!1 &7193381911909887700
 GameObject:
   m_ObjectHideFlags: 0

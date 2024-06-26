@@ -9,32 +9,31 @@ using UnityEngine;
 public class Firebase : MonoBehaviour
 {
     private readonly static string baseUrl = "https://ky-jam-default-rtdb.firebaseio.com";
+    private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public static async Task<T> GetDataAsync<T>(
-        string path,
-        CancellationToken cancellationToken = default
-    )
+    void OnApplicationQuit()
+    {
+        _cancellationTokenSource.Cancel();
+    }
+
+    public static async Task<T> GetDataAsync<T>(string path)
     {
         string jsonResponse = await SendRequestAsync(
             HttpMethod.Get,
             $"{baseUrl + path}.json",
             null,
-            cancellationToken
+            _cancellationTokenSource.Token
         );
         return JsonConvert.DeserializeObject<T>(jsonResponse);
     }
 
-    public static async Task<T> PatchDataAsync<T>(
-        string path,
-        string json,
-        CancellationToken cancellationToken = default
-    )
+    public static async Task<T> PatchDataAsync<T>(string path, string json)
     {
         string jsonResponse = await SendRequestAsync(
             new HttpMethod("PATCH"),
             $"{baseUrl + path}.json",
             json,
-            cancellationToken
+            _cancellationTokenSource.Token
         );
         return JsonConvert.DeserializeObject<T>(jsonResponse);
     }

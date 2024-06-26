@@ -41,13 +41,41 @@ public class VpsTracker : MonoBehaviour
 
     private bool hasNotifiedStartTracking = false;
 
+    private CurrentVpsData _currentVpsData;
+
     public static event Action<string> OnVpsTrackingStarted;
 
     private void Start()
     {
+        _status.text = "Starting VPS tracking...";
         _coverageClientManager = GetComponent<CoverageClientManager>();
         _arLocationManager.locationTrackingStateChanged += OnLocationTrackingStateChanged;
         StartCoroutine(CheckDirectionRoutine());
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("Game Manager is null");
+            _status.text = "Game Manager is null";
+            return;
+        }
+
+        if (GameManager.Instance.CurrentVpsData == null)
+        {
+            Debug.LogError("Current Vps Data is null");
+            _status.text = "Current Vps Data is null";
+            return;
+        }
+        _currentVpsData = GameManager.Instance.CurrentVpsData;
+
+        StartTracking();
+    }
+
+    private void StartTracking()
+    {
+        ARLocation[] arLocations = _arLocationManager.ARLocations;
+
+        _arLocationManager.SetARLocations(arLocations[0]);
+        _arLocationManager.StartTracking();
     }
 
     private void OnLocationTrackingStateChanged(ARLocationTrackedEventArgs args)
@@ -56,13 +84,18 @@ public class VpsTracker : MonoBehaviour
         {
             _arLocation = args.ARLocation;
             _status.text = "Tracking the location...";
+
+            if (_currentVpsData == null)
+            {
+                _status.text = "VPS data is null";
+                return;
+            }
+
             if (!hasNotifiedStartTracking)
             {
-                CurrentVpsData data = GameManager.Instance.CurrentVpsData;
-
-                _name.text = data.Name;
+                _name.text = _currentVpsData.Name;
                 _coverageClientManager.TryGetImageFromUrl(
-                    data.ImageURL,
+                    _currentVpsData.ImageURL,
                     downLoadedImage =>
                     {
                         if (downLoadedImage == null)
@@ -80,9 +113,9 @@ public class VpsTracker : MonoBehaviour
                 * Warning: The name is not guaranteed to be unique. This is just for testing purposes.
                 */
 
-                string vpsId = !string.IsNullOrEmpty(data.Identifier)
-                    ? data.Identifier
-                    : Regex.Replace(data.Name, "[^a-zA-Z0-9]", "");
+                string vpsId = !string.IsNullOrEmpty(_currentVpsData.Identifier)
+                    ? _currentVpsData.Identifier
+                    : Regex.Replace(_currentVpsData.Name, "[^a-zA-Z0-9]", "");
 
                 Debug.Log($"VPS Tracking started for {vpsId}");
 

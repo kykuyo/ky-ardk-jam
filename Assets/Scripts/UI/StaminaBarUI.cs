@@ -3,37 +3,45 @@ using UnityEngine.UI;
 
 public class StaminaBarUI : MonoBehaviour
 {
-    private Image _staminaBar;
-    private float _width;
-    private float _maxStamina = 100;
+    [SerializeField]
+    private GooTeamMaterials _teamMaterials;
+
+    [SerializeField]
+    private Image _energyIcon;
+    private Slider _slider;
+    private float _maxStamina;
 
     private void Start()
     {
-        InitBar();
+        _slider = GetComponent<Slider>();
+        _maxStamina = GameManager.Instance.MaxStamina;
+        int team = GameManager.Instance.Team;
+        InitSlider(team);
+
         GameManager.Instance.OnStaminaChanged += UpdateStaminaBar;
+        TeamSelector.OnTeamSelected += InitSlider;
     }
 
     private void OnDestroy()
     {
         GameManager.Instance.OnStaminaChanged -= UpdateStaminaBar;
+        TeamSelector.OnTeamSelected -= InitSlider;
     }
 
-    private void InitBar()
+    private void InitSlider(int team)
     {
-        //TODO: Replace this for an slider.
-        _staminaBar = transform.GetChild(0).GetComponent<Image>();
-        RectTransform rectTransform = _staminaBar.GetComponent<RectTransform>();
-        _width = rectTransform.rect.width;
-        rectTransform.sizeDelta = new Vector2(0, rectTransform.sizeDelta.y);
-
-        float stamina = GameManager.Instance.BuddyStamina;
-        UpdateStaminaBar(stamina);
+        _slider.value = GameManager.Instance.BuddyStamina / _maxStamina;
+        _slider.fillRect.GetComponent<Image>().color = _teamMaterials.GetTeamMaterial(team).color;
+        _energyIcon.color = _teamMaterials.GetTeamMaterial(team).color;
     }
 
     private void UpdateStaminaBar(float newStamina)
     {
-        float newWidth = newStamina / _maxStamina * _width;
-        RectTransform rectTransform = _staminaBar.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);
+        if (_slider == null)
+        {
+            _slider = GetComponent<Slider>();
+        }
+
+        _slider.value = newStamina / _maxStamina;
     }
 }

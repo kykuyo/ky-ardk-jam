@@ -20,6 +20,11 @@ public class GameBuddy : MonoBehaviour
         Invoke(nameof(SetStartPosition), 0.1f);
     }
 
+    private void OnDestroy()
+    {
+        GenericSpawner<Bubble>.OnProjectileSpawned -= Attack;
+    }
+
     private void SetStartPosition()
     {
         transform.position = _target.position;

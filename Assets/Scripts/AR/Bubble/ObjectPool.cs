@@ -34,7 +34,7 @@ public class ProjectilePool<T>
         _poolSize = poolSize;
         _projectileSize = projectileSize;
         _parentTransform = parentTransform;
-        Debug.Log("parentTransform: " + _parentTransform);
+
         InitializePool();
     }
 
