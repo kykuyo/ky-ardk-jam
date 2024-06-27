@@ -31,8 +31,6 @@ public class GameManager : MonoBehaviour
 
     public int Team { get; private set; }
 
-
-
     public AreaTarget AreaTarget { get; private set; }
 
     public event Action<float> OnStaminaChanged;
@@ -102,9 +100,7 @@ public class GameManager : MonoBehaviour
 
     private void Reset()
     {
-        PlayerPrefs.SetInt(PrefsKeysPointer.tutorial, 0);
         PlayerPrefs.DeleteKey(PLAYER_TEAM_KEY);
-        Invoke(nameof(ReloadScene), 1);
     }
 
     private void ReloadScene()

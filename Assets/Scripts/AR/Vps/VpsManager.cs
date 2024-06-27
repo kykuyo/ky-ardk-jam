@@ -6,6 +6,7 @@ using TMPro;
 using System.Collections;
 using System.Threading;
 using Niantic.Lightship.AR.VpsCoverage;
+using System.Collections.Generic;
 
 [Serializable]
 public class GameMode
@@ -31,6 +32,9 @@ public class VpsManager : MonoBehaviour
 
     [SerializeField]
     private GameMode bubblesMode;
+
+    [SerializeField]
+    private List<Sprite> _teamSprites;
 
     [SerializeField]
     private int _maxGooCapacity = 300;
@@ -84,6 +88,13 @@ public class VpsManager : MonoBehaviour
     {
         SetActiveMode(gooMode, bubblesMode);
         UpdateVpsStatus(true);
+        SetTeamSprite();
+    }
+
+    private void SetTeamSprite()
+    {
+        int team = GameManager.Instance.Team;
+        gooMode.buttonImage.sprite = _teamSprites[team];
     }
 
     private async void UpdateVpsStatus(bool isActive)
