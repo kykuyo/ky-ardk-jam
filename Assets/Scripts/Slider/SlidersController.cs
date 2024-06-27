@@ -29,13 +29,14 @@ namespace Sliders
 
         private void Awake()
         {
+            _nextButton.onClick.AddListener(OnClickNextButton);
+
             if (AlreadyReadTutorial())
             {
                 CloseSliders();
                 return;
             }
 
-            _nextButton.onClick.AddListener(OnClickNextButton);
             _currentSlider = _slidersInitializers[_sliderCount];
 
             _currentSlider.OnInit();
@@ -43,11 +44,7 @@ namespace Sliders
 
         public void OnReset()
         {
-            if (AlreadyReadTutorial())
-            {
-                CloseSliders();
-                return;
-            }
+            PlayerPrefs.SetInt(_slidersKeyOnPlayerPref, 0);
 
             _sliderCount = 0;
             _currentSlider = _slidersInitializers[_sliderCount];

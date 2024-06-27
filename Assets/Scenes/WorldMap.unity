@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1687412690}
-  m_IndirectSpecularColor: {r: 0.25570115, g: 0.6884732, b: 0.8180333, a: 1}
+  m_IndirectSpecularColor: {r: 0.25751677, g: 0.69046056, b: 0.81896985, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -557,7 +557,6 @@ GameObject:
   - component: {fileID: 175324683}
   - component: {fileID: 175324682}
   - component: {fileID: 175324681}
-  - component: {fileID: 175324684}
   m_Layer: 5
   m_Name: ResetButton
   m_TagString: Untagged
@@ -629,6 +628,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 514264563}
+        m_TargetAssemblyTypeName: Sliders.SlidersController, Assembly-CSharp
+        m_MethodName: OnReset
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 2032095135}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -679,19 +690,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 175324679}
   m_CullTransparentMesh: 1
---- !u!114 &175324684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175324679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5a6294a0114608419212657fb2f5743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _resetButton: {fileID: 175324681}
 --- !u!20 &209556978 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6614101381701084589, guid: 88c6861d76b4c49e18329bfbc54d44b5,
