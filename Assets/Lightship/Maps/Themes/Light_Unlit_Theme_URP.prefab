@@ -37,11 +37,31 @@ PrefabInstance:
         type: 3}
       propertyPath: _skybox
       value: 
-      objectReference: {fileID: 2100000, guid: 9ca22510633fbfd4399f1704cd9d5c72, type: 2}
+      objectReference: {fileID: 2100000, guid: 4d0e0ffc7a6c1bf44b435e0b23260f8c, type: 2}
     - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
         type: 3}
       propertyPath: _themeName
       value: Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
+        type: 3}
+      propertyPath: _skyboxColor.a
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
+        type: 3}
+      propertyPath: _skyboxColor.b
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
+        type: 3}
+      propertyPath: _skyboxColor.g
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
+        type: 3}
+      propertyPath: _skyboxColor.r
+      value: 0.5019608
       objectReference: {fileID: 0}
     - target: {fileID: 2345192730605552772, guid: cd277179f7659423ea870564d2ff9e75,
         type: 3}
@@ -96,5 +116,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5696892371309873225, guid: cd277179f7659423ea870564d2ff9e75,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4059540547146007496}
   m_SourcePrefab: {fileID: 100100000, guid: cd277179f7659423ea870564d2ff9e75, type: 3}
+--- !u!1 &1793393600098031457 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5696892371309873225, guid: cd277179f7659423ea870564d2ff9e75,
+    type: 3}
+  m_PrefabInstance: {fileID: 6335443825070415656}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4059540547146007496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793393600098031457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2303ea277006479a84f26bddebbf3d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animSpeed: 1

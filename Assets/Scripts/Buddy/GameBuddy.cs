@@ -43,7 +43,6 @@ public class GameBuddy : MonoBehaviour
     {
         Vector3 displacement = targetPosition - transform.position;
         _targetRotation = Quaternion.LookRotation(displacement);
-        _animator.SetTrigger("Attack");
     }
 
     private void FixedUpdate()
