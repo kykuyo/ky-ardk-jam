@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 using System.Threading;
+using Niantic.Lightship.AR.VpsCoverage;
 
 [Serializable]
 public class GameMode
@@ -56,8 +57,8 @@ public class VpsManager : MonoBehaviour
 
     private void Awake()
     {
-        Goo.OnGooCreated += UpdateGooCapacityStatus;
-        Goo.OnGooDestroyed += UpdateGooCapacityStatus;
+        GenericSpawner<PlayerGoo>.OnSpawnerReleased += UpdateGooCapacityStatus;
+        GenericSpawner<Bubble>.OnSpawnerReleased += UpdateGooCapacityStatus;
         VpsAnchorService.OnGooCreated += UpdateGooCapacityStatus;
 
         _cts = new CancellationTokenSource();
@@ -65,8 +66,8 @@ public class VpsManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        Goo.OnGooCreated -= UpdateGooCapacityStatus;
-        Goo.OnGooDestroyed -= UpdateGooCapacityStatus;
+        GenericSpawner<PlayerGoo>.OnSpawnerReleased -= UpdateGooCapacityStatus;
+        GenericSpawner<Bubble>.OnSpawnerReleased -= UpdateGooCapacityStatus;
         VpsAnchorService.OnGooCreated -= UpdateGooCapacityStatus;
 
         _cts.Cancel();
@@ -87,7 +88,8 @@ public class VpsManager : MonoBehaviour
 
     private async void UpdateVpsStatus(bool isActive)
     {
-        CurrentVpsData currentVpsData = GameManager.Instance.CurrentVpsData;
+        LocalizationTarget target = GameManager.Instance.AreaTarget.Target;
+
         VpsStatus status =
             new()
             {
@@ -100,7 +102,7 @@ public class VpsManager : MonoBehaviour
         Debug.Log($"Updating VPS status: {data}");
 
         VpsStatus vpsStatus = await Firebase.PatchDataAsync<VpsStatus>(
-            $"/vps-status/{currentVpsData.Identifier}",
+            $"/vps-status/{target.Identifier}",
             data
         //_cts.Token
         );

@@ -31,7 +31,11 @@ public class GenericSpawner<T> : MonoBehaviour
 
     public bool IsBlocked { get; set; } = false;
 
+    private bool _isMouseButtonDown = false;
+
     public static event System.Action<Vector3> OnProjectileSpawned;
+
+    public static event System.Action OnSpawnerReleased;
 
     public void SetParentTransform(Transform parentTransform)
     {
@@ -55,15 +59,19 @@ public class GenericSpawner<T> : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButton(0))
+        if (
+            Input.GetMouseButton(0)
+            && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()
+        )
         {
-            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
             _targetPosition = GetMouseWorldPosition();
             SpawnBurst();
+            _isMouseButtonDown = true;
+        }
+        else if (_isMouseButtonDown)
+        {
+            _isMouseButtonDown = false;
+            OnSpawnerReleased?.Invoke();
         }
     }
 

@@ -39,15 +39,17 @@ public class VpsAnchorService : MonoBehaviour
         _cts = new CancellationTokenSource();
     }
 
-    private void OnDestroy()
-    {
-        _cts.Cancel();
-    }
-
     private void Start()
     {
         VpsTracker.OnVpsTrackingStarted += OnVpsTrackingStarted;
         VpsManager.OnVpsWillClose += SendAnchorData;
+    }
+
+    private void OnDestroy()
+    {
+        VpsTracker.OnVpsTrackingStarted -= OnVpsTrackingStarted;
+        VpsManager.OnVpsWillClose -= SendAnchorData;
+        _cts.Cancel();
     }
 
     private void OnVpsTrackingStarted(string vpsId)

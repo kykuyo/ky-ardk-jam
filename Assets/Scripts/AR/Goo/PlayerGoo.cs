@@ -48,7 +48,6 @@ public class PlayerGoo : Goo, IProjectile
         if (!HasCollided)
         {
             _returnToPool?.Invoke(gameObject);
-            InvokeOnGooDestroyed();
         }
     }
 
@@ -107,6 +106,5 @@ public class PlayerGoo : Goo, IProjectile
         gameObject.layer = LayerMask.NameToLayer("Metaballs");
 
         HasCollided = true;
-        InvokeOnGooCreated();
     }
 }

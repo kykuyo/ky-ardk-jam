@@ -19,9 +19,6 @@ public class Goo : MonoBehaviour
     [HideInInspector]
     public bool HasCollided { get; protected set; } = false;
 
-    public static event Action OnGooCreated;
-    public static event Action OnGooDestroyed;
-
     private void Awake()
     {
         _initialScale = transform.localScale;
@@ -31,16 +28,6 @@ public class Goo : MonoBehaviour
     {
         _initialScale = new Vector3(size, size, size);
         _returnToPool = returnToPool;
-    }
-
-    protected void InvokeOnGooCreated()
-    {
-        OnGooCreated?.Invoke();
-    }
-
-    protected void InvokeOnGooDestroyed()
-    {
-        OnGooDestroyed?.Invoke();
     }
 
     public void Clean()
@@ -75,8 +62,6 @@ public class Goo : MonoBehaviour
         }
 
         transform.localScale = Vector3.zero;
-
-        OnGooDestroyed?.Invoke();
 
         if (_returnToPool != null)
         {

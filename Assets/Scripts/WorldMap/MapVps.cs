@@ -17,11 +17,31 @@ public class MapVps : MapEntity
     {
         _pinMeshRenderer = GetComponentInChildren<MeshRenderer>();
         VpsService.Instance.OnVpsStatusReceived += OnVpsStatusReceived;
+        UpdateVpsStatus();
     }
 
     private void OnDestroy()
     {
         VpsService.Instance.OnVpsStatusReceived -= OnVpsStatusReceived;
+    }
+
+    private VpsStatus LoadVpsDataFromPrefs(string vpsId)
+    {
+        string data = PlayerPrefs.GetString($"VpsStatus_{vpsId}", string.Empty);
+        if (!string.IsNullOrEmpty(data))
+        {
+            return JsonUtility.FromJson<VpsStatus>(data);
+        }
+        return null;
+    }
+
+    private void UpdateVpsStatus()
+    {
+        vpsStatus = LoadVpsDataFromPrefs(areaTarget.Target.Identifier);
+        if (vpsStatus != null)
+        {
+            SetTeamMaterial();
+        }
     }
 
     protected override void OnPlayerInteract()
@@ -66,7 +86,12 @@ public class MapVps : MapEntity
 
         int maxScore = Mathf.Max(team_0_score, team_1_score, team_2_score);
 
-        // Verificar si maxScore es mayor que 0 antes de asignar el material
+        if (_pinMeshRenderer == null)
+        {
+            Debug.Log("Pin mesh renderer is null");
+            return;
+        }
+
         if (maxScore > 0)
         {
             if (maxScore == team_0_score)
@@ -81,10 +106,6 @@ public class MapVps : MapEntity
             {
                 _pinMeshRenderer.material = _teamMaterial.GetTeamMaterial(2);
             }
-        }
-        else
-        {
-            Debug.Log("No team has a score greater than 0");
         }
     }
 }

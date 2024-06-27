@@ -2,6 +2,7 @@ using System;
 using Sliders;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Niantic.Lightship.AR.VpsCoverage;
 
 public class GameManager : MonoBehaviour
 {
@@ -30,7 +31,9 @@ public class GameManager : MonoBehaviour
 
     public int Team { get; private set; }
 
-    public CurrentVpsData CurrentVpsData { get; private set; }
+
+
+    public AreaTarget AreaTarget { get; private set; }
 
     public event Action<float> OnStaminaChanged;
 
@@ -82,9 +85,9 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public void SetCurrentVpsData(CurrentVpsData data)
+    public void SetAreaTarget(AreaTarget data)
     {
-        CurrentVpsData = data;
+        AreaTarget = data;
     }
 
     public void FeedBuddy(float amount)

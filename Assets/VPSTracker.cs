@@ -41,7 +41,7 @@ public class VpsTracker : MonoBehaviour
 
     private bool hasNotifiedStartTracking = false;
 
-    private CurrentVpsData _currentVpsData;
+    private AreaTarget _areaTarget;
 
     public static event Action<string> OnVpsTrackingStarted;
 
@@ -50,32 +50,51 @@ public class VpsTracker : MonoBehaviour
         _status.text = "Starting VPS tracking...";
         _coverageClientManager = GetComponent<CoverageClientManager>();
         _arLocationManager.locationTrackingStateChanged += OnLocationTrackingStateChanged;
+
+        _areaTarget = GameManager.Instance.AreaTarget;
+
+        LoadData(_areaTarget);
+
+        StartTracking(_areaTarget);
+
         StartCoroutine(CheckDirectionRoutine());
-
-        if (GameManager.Instance == null)
-        {
-            Debug.LogError("Game Manager is null");
-            _status.text = "Game Manager is null";
-            return;
-        }
-
-        if (GameManager.Instance.CurrentVpsData == null)
-        {
-            Debug.LogError("Current Vps Data is null");
-            _status.text = "Current Vps Data is null";
-            return;
-        }
-        _currentVpsData = GameManager.Instance.CurrentVpsData;
-
-        StartTracking();
     }
 
-    private void StartTracking()
+    private void StartTracking(AreaTarget areaTarget)
     {
-        ARLocation[] arLocations = _arLocationManager.ARLocations;
+        var anchorPayloadString = areaTarget.Target.DefaultAnchor;
 
-        _arLocationManager.SetARLocations(arLocations[0]);
+        if (string.IsNullOrEmpty(anchorPayloadString))
+        {
+            // If this area has no anchor payload, don't do anything
+            // Select a different area target in a real application
+            Debug.LogError($"No anchor found for {areaTarget.Target.Name}");
+            return;
+        }
+
+        var anchorPayload = new ARPersistentAnchorPayload(anchorPayloadString);
+
+        var locationGameObject = new GameObject();
+        var arLocation = locationGameObject.AddComponent<ARLocation>();
+        arLocation.Payload = anchorPayload;
+        _arLocationManager.SetARLocations(arLocation);
         _arLocationManager.StartTracking();
+    }
+
+    private void LoadData(AreaTarget areaTarget)
+    {
+        _name.text = areaTarget.Target.Name;
+        _coverageClientManager.TryGetImageFromUrl(
+            areaTarget.Target.ImageURL,
+            downLoadedImage =>
+            {
+                if (downLoadedImage == null)
+                {
+                    return;
+                }
+                _image.texture = downLoadedImage;
+            }
+        );
     }
 
     private void OnLocationTrackingStateChanged(ARLocationTrackedEventArgs args)
@@ -85,40 +104,13 @@ public class VpsTracker : MonoBehaviour
             _arLocation = args.ARLocation;
             _status.text = "Tracking the location...";
 
-            if (_currentVpsData == null)
-            {
-                _status.text = "VPS data is null";
-                return;
-            }
-
             if (!hasNotifiedStartTracking)
             {
-                _name.text = _currentVpsData.Name;
-                _coverageClientManager.TryGetImageFromUrl(
-                    _currentVpsData.ImageURL,
-                    downLoadedImage =>
-                    {
-                        if (downLoadedImage == null)
-                        {
-                            return;
-                        }
-                        _image.texture = downLoadedImage;
-                    }
-                );
+                LocalizationTarget target = _areaTarget.Target;
 
-                /**
-                * The VPS identifier is used to uniquely identify the VPS.
-                * If the VPS has an identifier, it will be used as the identifier.
-                * Otherwise, the VPS name will be used as the identifier.
-                * Warning: The name is not guaranteed to be unique. This is just for testing purposes.
-                */
-
-                string vpsId = !string.IsNullOrEmpty(_currentVpsData.Identifier)
-                    ? _currentVpsData.Identifier
-                    : Regex.Replace(_currentVpsData.Name, "[^a-zA-Z0-9]", "");
-
-                Debug.Log($"VPS Tracking started for {vpsId}");
-
+                string vpsId = !string.IsNullOrEmpty(target.Identifier)
+                    ? target.Identifier
+                    : Regex.Replace(target.Name, "[^a-zA-Z0-9]", "");
                 OnVpsTrackingStarted?.Invoke(vpsId);
 
                 hasNotifiedStartTracking = true;

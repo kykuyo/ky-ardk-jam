@@ -13,11 +13,19 @@ public class GameBuddy : MonoBehaviour
     private float _rotationSpeed = 3.0f;
 
     [SerializeField]
+    private float _minDistance = 5.0f;
+
+    [SerializeField]
     private Animator _animator;
+
+    private bool _startMoving = false;
+
+    private Quaternion? _targetRotation = null;
 
     private void Start()
     {
-        Invoke(nameof(SetStartPosition), 0.1f);
+        GenericSpawner<Bubble>.OnProjectileSpawned += Attack;
+        Invoke(nameof(SetStartPosition), 1);
     }
 
     private void OnDestroy()
@@ -28,45 +36,55 @@ public class GameBuddy : MonoBehaviour
     private void SetStartPosition()
     {
         transform.position = _target.position;
-        GenericSpawner<Bubble>.OnProjectileSpawned += Attack;
+        _startMoving = true;
     }
 
     public void Attack(Vector3 targetPosition)
     {
         Vector3 displacement = targetPosition - transform.position;
-        Quaternion targetRotation = Quaternion.LookRotation(displacement);
-        transform.rotation = targetRotation;
+        _targetRotation = Quaternion.LookRotation(displacement);
         _animator.SetTrigger("Attack");
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
+        if (!_startMoving)
+        {
+            return;
+        }
+
         Vector3 displacement = _target.position - transform.position;
+        float distance = displacement.magnitude;
 
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            _target.position,
-            _speed * Time.deltaTime
-        );
+        if (distance > _minDistance)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                _target.position,
+                _speed * Time.fixedDeltaTime
+            );
+        }
 
-        float velocity = displacement.magnitude / Time.deltaTime;
+        if (_targetRotation.HasValue)
+        {
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                _targetRotation.Value,
+                Time.fixedDeltaTime * _rotationSpeed
+            );
 
-        _animator.SetFloat("Speed", velocity);
+            // Opcional: Resetear _targetRotation si se desea detener la interpolación una vez alcanzada la rotación objetivo.
+            // if (Quaternion.Angle(transform.rotation, _targetRotation.Value) < 1.0f) { _targetRotation = null; }
+        }
 
-        if (displacement != Vector3.zero)
+        if (displacement != Vector3.zero && !_targetRotation.HasValue)
         {
             Quaternion targetRotation = Quaternion.LookRotation(displacement);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetRotation,
-                Time.deltaTime * _rotationSpeed
+                Time.fixedDeltaTime * _rotationSpeed
             );
         }
-    }
-
-    void OnAnimatorMove()
-    {
-        Vector3 position = _animator.rootPosition;
-        transform.position = position;
     }
 }

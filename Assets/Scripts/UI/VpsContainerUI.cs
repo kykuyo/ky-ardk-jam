@@ -6,14 +6,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-[Serializable]
-public class CurrentVpsData
-{
-    public string Identifier;
-    public string Name;
-    public string ImageURL;
-}
-
 public class VpsContainerUI : MonoBehaviour
 {
     [SerializeField]
@@ -72,31 +64,14 @@ public class VpsContainerUI : MonoBehaviour
         _button.onClick.RemoveAllListeners();
         _button.onClick.AddListener(() =>
         {
-            CurrentVpsData data =
-                new()
-                {
-                    Identifier = areaTarget.Target.Identifier,
-                    Name = areaTarget.Target.Name,
-                    ImageURL = areaTarget.Target.ImageURL
-                };
-
-            GameManager.Instance.SetCurrentVpsData(data);
-
+            GameManager.Instance.SetAreaTarget(areaTarget);
             SceneManager.LoadScene("VPS_Goo");
         });
 
         _testSceneButton.onClick.RemoveAllListeners();
         _testSceneButton.onClick.AddListener(() =>
         {
-            CurrentVpsData data =
-                new()
-                {
-                    Identifier = areaTarget.Target.Identifier,
-                    Name = areaTarget.Target.Name,
-                    ImageURL = areaTarget.Target.ImageURL
-                };
-
-            GameManager.Instance.SetCurrentVpsData(data);
+            GameManager.Instance.SetAreaTarget(areaTarget);
             SceneManager.LoadScene("VPS_TEST");
         });
 

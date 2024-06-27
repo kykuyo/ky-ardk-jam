@@ -9,33 +9,58 @@ using UnityEngine;
 public class Firebase : MonoBehaviour
 {
     private readonly static string baseUrl = "https://ky-jam-default-rtdb.firebaseio.com";
-    private static readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    void OnApplicationQuit()
+    public static async Task<T> GetDataAsync<T>(
+        string path,
+        CancellationToken cancellationToken = default
+    )
     {
-        _cancellationTokenSource.Cancel();
+        try
+        {
+            string jsonResponse = await SendRequestAsync(
+                HttpMethod.Get,
+                $"{baseUrl + path}.json",
+                null,
+                cancellationToken
+            );
+            return JsonConvert.DeserializeObject<T>(jsonResponse);
+        }
+        catch (TaskCanceledException)
+        {
+            return default(T);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error getting data: {ex.Message}");
+            throw;
+        }
     }
 
-    public static async Task<T> GetDataAsync<T>(string path)
+    public static async Task<T> PatchDataAsync<T>(
+        string path,
+        string json,
+        CancellationToken cancellationToken = default
+    )
     {
-        string jsonResponse = await SendRequestAsync(
-            HttpMethod.Get,
-            $"{baseUrl + path}.json",
-            null,
-            _cancellationTokenSource.Token
-        );
-        return JsonConvert.DeserializeObject<T>(jsonResponse);
-    }
-
-    public static async Task<T> PatchDataAsync<T>(string path, string json)
-    {
-        string jsonResponse = await SendRequestAsync(
-            new HttpMethod("PATCH"),
-            $"{baseUrl + path}.json",
-            json,
-            _cancellationTokenSource.Token
-        );
-        return JsonConvert.DeserializeObject<T>(jsonResponse);
+        try
+        {
+            string jsonResponse = await SendRequestAsync(
+                new HttpMethod("PATCH"),
+                $"{baseUrl + path}.json",
+                json,
+                cancellationToken
+            );
+            return JsonConvert.DeserializeObject<T>(jsonResponse);
+        }
+        catch (TaskCanceledException)
+        {
+            return default(T);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error updating data: {ex.Message}");
+            throw;
+        }
     }
 
     private static async Task<string> SendRequestAsync(
