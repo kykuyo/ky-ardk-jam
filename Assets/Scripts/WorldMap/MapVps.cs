@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using Niantic.Lightship.AR.VpsCoverage;
 using UnityEngine;
 
@@ -49,7 +50,11 @@ public class MapVps : MapEntity
         VpsContainerUI vpsContainerUI = FindObjectOfType<VpsContainerUI>();
 
         vpsContainerUI.ShowVpsContainerUI(areaTarget);
-        string vpsId = areaTarget.Target.Identifier;
+
+        string vpsId = !string.IsNullOrEmpty(areaTarget.Target.Identifier)
+            ? areaTarget.Target.Identifier
+            : Regex.Replace(areaTarget.Target.Name, "[^a-zA-Z0-9]", "");
+
         VpsService.Instance.GetVpsStatus(vpsId);
     }
 
