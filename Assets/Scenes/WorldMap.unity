@@ -3836,7 +3836,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: Find a location and spew goo of your color, or clean up other team's goo
-    to place more of your won.
+    to place more of your own.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4da8f601fd836f344a561e8a10761a0f, type: 2}
   m_sharedMaterial: {fileID: 5569911622047831710, guid: 4da8f601fd836f344a561e8a10761a0f,
@@ -4887,7 +4887,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Ciam Team:'
+  m_text: 'Cyan Team:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b0d09cd71a6fa9a48a4119eb73a68632, type: 2}
   m_sharedMaterial: {fileID: 2286683609506505596, guid: b0d09cd71a6fa9a48a4119eb73a68632,
