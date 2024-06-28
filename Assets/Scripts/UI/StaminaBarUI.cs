@@ -31,8 +31,23 @@ public class StaminaBarUI : MonoBehaviour
     private void InitSlider(int team)
     {
         _slider.value = GameManager.Instance.BuddyStamina / _maxStamina;
-        _slider.fillRect.GetComponent<Image>().color = _teamMaterials.GetTeamMaterial(team).color;
-        _energyIcon.color = _teamMaterials.GetTeamMaterial(team).color;
+
+        Material teamMaterial = _teamMaterials.GetTeamMaterial(team);
+        Color teamColor = GetMaterialColor(teamMaterial, "_Color", "_BaseColor");
+        _slider.fillRect.GetComponent<Image>().color = teamColor;
+        _energyIcon.color = teamColor;
+    }
+
+    private Color GetMaterialColor(Material material, params string[] colorPropertyNames)
+    {
+        foreach (var propName in colorPropertyNames)
+        {
+            if (material.HasProperty(propName))
+            {
+                return material.GetColor(propName);
+            }
+        }
+        return Color.white;
     }
 
     private void UpdateStaminaBar(float newStamina)

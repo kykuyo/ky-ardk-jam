@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,6 +17,9 @@ public class MapBuddy : MonoBehaviour
 
     [SerializeField]
     private Animator _animator;
+
+    [SerializeField]
+    private List<ParticleSystem> _effects;
 
     private NavMeshAgent _navMeshAgent;
 
@@ -80,12 +84,23 @@ public class MapBuddy : MonoBehaviour
     {
         _isEating = true;
         _animator.SetTrigger("Attack");
-        yield return new WaitForSeconds(_waitTime);
+
         Berry berry = _target.GetComponent<Berry>();
+        yield return new WaitForSeconds(_waitTime);
+        PlayEffects(berry);
         berry.obj.Dispose();
         OnBerryEaten?.Invoke(berry.StaminaAmount);
         _target = null;
         _isEating = false;
+    }
+
+    private void PlayEffects(Berry berry)
+    {
+        Vector3 position = berry.transform.position;
+        int team = berry.Team;
+
+        _effects[team].transform.position = position;
+        _effects[team].Play();
     }
 
     void OnAnimatorMove()
