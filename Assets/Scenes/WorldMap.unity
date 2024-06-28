@@ -9277,6 +9277,11 @@ PrefabInstance:
       objectReference: {fileID: 2982294553559632241}
     - target: {fileID: 7723419565589228801, guid: 015fb28e9d6d2cb40a8eb1dff52eae54,
         type: 3}
+      propertyPath: _waitTime
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7723419565589228801, guid: 015fb28e9d6d2cb40a8eb1dff52eae54,
+        type: 3}
       propertyPath: _effects.Array.size
       value: 3
       objectReference: {fileID: 0}
